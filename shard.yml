@@ -1,0 +1,22 @@
+name: meth
+version: 0.1.0
+crystal: 1.3.2
+license: MIT
+
+authors:
+  - Ragmaanir <ragmaanir@gmail.com>
+
+development_dependencies:
+  ameba:
+    github: veelenga/ameba
+    version: 0.14
+  microtest:
+    github: ragmaanir/microtest
+    branch: master
+
+dependencies:
+  kontrakt:
+    github: ragmaanir/kontrakt
+    version: ~> 0.1
+  debug:
+    github: Sija/debug.cr
