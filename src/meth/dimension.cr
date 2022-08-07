@@ -54,6 +54,10 @@ module Meth
       {width, height}
     end
 
+    def flip : self
+      self.class.new(height, width)
+    end
+
     def to_s(io : IO)
       stringify(io)
     end
