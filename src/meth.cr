@@ -19,13 +19,67 @@ module Meth
   end
 
   alias Ratio = Float64
+
+  module Factories
+    def p2f(*args)
+      Meth::Point2f.new(*args)
+    end
+
+    def p2i(*args)
+      Meth::Point2i.new(*args)
+    end
+
+    def v2f(*args)
+      Meth::Vector2f.new(*args)
+    end
+
+    def v2i(*args)
+      Meth::Vector2i.new(*args)
+    end
+
+    def d2f(*args)
+      Meth::Dim2f.new(*args)
+    end
+
+    def d2i(*args)
+      Meth::Dim2i.new(*args)
+    end
+  end
+
+  extend Factories
+
+  def self.scalar_format_string(c : T.class) forall T
+    if c < Int
+      "%d"
+    elsif c < Float
+      "%4.2f"
+    else
+      raise "Unhandled type: #{c}"
+    end
+  end
+
+  def self.inspect_composite(io : IO, name : String, *values : T) forall T
+    io << name
+    io << T.class.name.to_s.downcase[0]
+    io << "("
+
+    f = Meth.scalar_format_string(T)
+
+    values.each_with_index { |v, i|
+      io << ", " unless i == 0
+      io << f % v
+    }
+    io << ")"
+  end
 end
 
 require "./meth/point"
 require "./meth/vector"
-require "./meth/dimension"
+require "./meth/dim2"
+require "./meth/dim3"
 require "./meth/circle"
 require "./meth/rect"
 require "./meth/margin"
 require "./meth/color"
 require "./meth/intersection_tester"
+require "./meth/prng"

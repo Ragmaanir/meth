@@ -59,20 +59,32 @@ module Meth
       x * v.x + y * v.y
     end
 
-    def /(s : Float64)
+    def //(f : T) : self
+      create(x // f, y // f)
+    end
+
+    def //(i : Int32) : Vector2i
+      Vector2i.new((x // i).to_i, (y // i).to_i)
+    end
+
+    def /(s : Float64) : self
       inv = 1.0/s
       create(x*inv, y*inv)
     end
 
-    def -(other : self)
+    def /(v : self) : Vector2f
+      Vector2f.new(x*(1.0 / v.x), y*(1.0 / v.y))
+    end
+
+    def -(other : self) : self
       create(x - other.x, y - other.y)
     end
 
-    def +(other : self)
+    def +(other : self) : self
       create(x + other.x, y + other.y)
     end
 
-    def abs
+    def abs : self
       create(x.abs, y.abs)
     end
 
@@ -133,6 +145,31 @@ module Meth
       Point2(T).new(x, y)
     end
 
+    def to_dim : Dimension2(T)
+      # FIXME: determine statically?
+      {% if @type.is_a?(Int32) %}
+        Dim2i.new(x.to_i, y.to_i)
+      {% else %}
+        Dim2f.new(x.to_f, y.to_f)
+      {% end %}
+    end
+
+    # def to_dim
+    #   if x.is_a?(Int32)
+    #     Dim2i.new(x.to_i, y.to_i)
+    #   else
+    #     Dim2f.new(x.to_f, y.to_f)
+    #   end
+    # end
+
+    # def to_dim2i
+    #   Dim2i.new(x.to_i, y.to_i)
+    # end
+
+    # def to_dim2f
+    #   Dim2f.new(x.to_f, y.to_f)
+    # end
+
     def to_json(config : JSON::Builder)
       config.object do
         config.field "x", x
@@ -141,7 +178,7 @@ module Meth
     end
 
     def inspect(io : IO)
-      io << "Vector2(#{T})(x: %4.2f, y: %4.2f)" % {x, y}
+      Meth.inspect_composite(io, "Vector2", x, y)
     end
   end
 

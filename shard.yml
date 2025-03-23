@@ -18,3 +18,6 @@ dependencies:
   kontrakt:
     github: ragmaanir/kontrakt
     version: ~> 0.1
+  open-simplex-noise:
+    github: ragmaanir/crystal-open-simplex-noise
+    branch: master

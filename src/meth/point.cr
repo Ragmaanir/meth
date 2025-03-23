@@ -29,19 +29,39 @@ module Meth
       Vector2(T).new(x - p.x, y - p.y)
     end
 
-    def *(v : Vector2(X)) forall X
-      self.class.new(x * v.x, y * v.y)
+    def *(v : Vector2(Int32))
+      Point2i.new(x * v.x, y * v.y)
+    end
+
+    def *(v : Vector2(Float64))
+      Point2f.new(x * v.x, y * v.y)
+    end
+
+    def /(v : Vector2(Float64))
+      Point2f.new(x / v.x, y / v.y)
+    end
+
+    def /(v : Vector2(Int32))
+      Point2i.new(x.to_f / v.x, y.to_f / v.y)
+    end
+
+    def /(f : Float)
+      Point2f.new(x / f, y / f)
+    end
+
+    def //(s : Int32)
+      Point2i.new((x // s).to_i, (y // s).to_i)
     end
 
     def towards(target : self)
       target - self
     end
 
-    def scale(f : T)
+    def scaled(f : T)
       self.class.new(x*f, y*f)
     end
 
-    def scale(f : Float64)
+    def scaled(f : Float64)
       Point2f.new(x*f, y*f)
     end
 
@@ -54,11 +74,11 @@ module Meth
     end
 
     def aligned(size : Int32)
-      pos = to_vector2f / size.to_f
-      Point2i.new(
-        pos.x.floor.to_i * size,
-        pos.y.floor.to_i * size
-      )
+      (self // size).scaled(size)
+    end
+
+    def close_to?(other : self)
+      (other - self).zero?
     end
 
     def to_tuple
@@ -81,10 +101,6 @@ module Meth
       Vector2f.new(x.to_f, y.to_f)
     end
 
-    def to_sf
-      to_sf_vector
-    end
-
     def to_json(config : JSON::Builder)
       config.object do
         config.field "x", x
@@ -93,8 +109,7 @@ module Meth
     end
 
     def inspect(io : IO)
-      t = T.name.to_s.downcase[0]
-      io << "Point2#{t}(x: %4.2f, y: %4.2f)" % {x, y}
+      Meth.inspect_composite(io, "Point2", x, y)
     end
   end
 

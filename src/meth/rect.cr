@@ -22,6 +22,10 @@ module Meth
     def initialize(@min, @size)
     end
 
+    def initialize(@min, size : Vector2(Scalar))
+      @size = size.to_dim
+    end
+
     private def point(x : Scalar, y : Scalar)
       Point2(Scalar).new(x, y)
     end
@@ -119,12 +123,21 @@ module Meth
     end
 
     def vertices
-      [top_left, top_right, bottom_right, bottom_left]
+      {top_left, top_right, bottom_right, bottom_left}
     end
 
     def contains?(point : Point2(X)) forall X
       point.x >= min.x && point.x < max.x &&
         point.y >= min.y && point.y < max.y
+    end
+
+    # FIXME: only for int rect
+    def each_horizontally(&)
+      (top..bottom).each { |y|
+        (left..right).each { |x|
+          yield(x, y)
+        }
+      }
     end
 
     def to_json(config : JSON::Builder)
