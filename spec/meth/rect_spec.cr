@@ -55,5 +55,20 @@ describe Meth::Rect do
     assert r.max == p2i(0, 0)
   end
 
-  test "inset creating negative size raises"
+  test "inset creating negative size creates empty rect preserving position" do
+    # does nothing if no space
+    r = Rect2i.new(p2i(5, 7), d2i(0, 0)).inset(1)
+
+    assert r == Rect2i.new(p2i(5, 7), d2i(0, 0))
+
+    # insets right, but not left
+    r = Rect2i.new(p2i(5, 7), d2i(1, 0)).inset(1)
+
+    assert r == Rect2i.new(p2i(5, 7), d2i(0, 0))
+
+    # insets left and right
+    r = Rect2i.new(p2i(5, 7), d2i(2, 0)).inset(1)
+
+    assert r == Rect2i.new(p2i(6, 7), d2i(0, 0))
+  end
 end

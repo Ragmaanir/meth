@@ -4,7 +4,7 @@ module Meth
   class Array2D(T)
     record(Coord, x : Int32, y : Int32)
 
-    include Enumerable({Coord, T})
+    # include Enumerable({Coord, T})
 
     getter dimension : Dim2i
     getter array : Array(T)
@@ -70,6 +70,12 @@ module Meth
           coord = Coord.new(x, y)
           block.call({coord, self[coord]})
         }
+      }
+    end
+
+    def map(&block : (Coord, T) -> _)
+      res = self.class.new(dimension) { |c|
+        block.call(c, self[c])
       }
     end
   end # Array3D

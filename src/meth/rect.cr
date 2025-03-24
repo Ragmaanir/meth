@@ -50,10 +50,7 @@ module Meth
     end
 
     def inset(amount : Scalar)
-      create(
-        min.offst(amount),
-        max.offset(-amount)
-      )
+      inset(amount, amount, amount, amount)
     end
 
     def inset(margin : Margin(Scalar))
@@ -64,9 +61,32 @@ module Meth
     end
 
     def inset(l : Scalar, r : Scalar, t : Scalar, b : Scalar)
+      x = min.x
+      y = min.y
+      w = size.x
+      h = size.y
+
+      if w >= r
+        w -= r
+      end
+
+      if h >= b
+        h -= b
+      end
+
+      if w >= l
+        x += l
+        w -= l
+      end
+
+      if h >= t
+        y += t
+        h -= t
+      end
+
       create(
-        min.offset(l, t),
-        max.offset(-r, -b)
+        Point2(Scalar).new(x, y),
+        Dimension2(Scalar).new(w, h)
       )
     end
 
