@@ -8,6 +8,8 @@ module Meth
     getter height : T
     getter depth : T
 
+    def_equals_and_hash width, height, depth
+
     def initialize(@width, @height, @depth)
     end
 
@@ -33,6 +35,18 @@ module Meth
 
     def diagonal
       Vector3(T).new(width, height, depth).length
+    end
+
+    def index_for_coord(coord : Tuple(Int32, Int32, Int32))
+      coord[0] + coord[1] * width + coord[2] * height*width
+    end
+
+    def coord_for_index(i : Int32) : Tuple(Int32, Int32, Int32)
+      x = i % width
+      y = (i // width) % height
+      z = i // (width * height)
+
+      {x, y, z}
     end
 
     def to_vector

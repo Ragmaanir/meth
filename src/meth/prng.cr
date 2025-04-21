@@ -41,7 +41,7 @@ module Meth::PRNG
   end
 
   module Noise2D
-    abstract def int32(a : UInt32, b : UInt32) : UInt32
+    abstract def int32(a : Int32, b : Int32) : UInt32
   end
 
   # uint32_t wyhash_mix(uint32_t a, uint32_t b) {
@@ -59,8 +59,8 @@ module Meth::PRNG
 
     MAGIC = 0xa0761d6478bd642f_u64
 
-    def int32(a : UInt32, b : UInt32) : UInt32
-      seed = (a.to_u64 << 32) | b
+    def int32(a : Int32, b : Int32) : UInt32
+      seed = (a.to_u64! << 32) | b.to_u64!
       seed ^= seed >> 32
       seed &*= MAGIC
       seed ^= seed >> 32
@@ -69,11 +69,11 @@ module Meth::PRNG
       seed.to_u32!
     end
 
-    def bifloat32(a : UInt32, b : UInt32) : Float32
+    def bifloat32(a : Int32, b : Int32) : Float32
       to_bifloat32(int32(a, b))
     end
 
-    def unifloat32(a : UInt32, b : UInt32) : Float32
+    def unifloat32(a : Int32, b : Int32) : Float32
       to_unifloat32(int32(a, b))
     end
   end
@@ -91,8 +91,8 @@ module Meth::PRNG
     include Noise2D
     include MathHelpers
 
-    def int32(a : UInt32, b : UInt32) : UInt32
-      h = a &* 0xcc9e2d51 &+ b &* 0x1b873593
+    def int32(a : Int32, b : Int32) : UInt32
+      h = a.to_u32! &* 0xcc9e2d51 &+ b.to_u32! &* 0x1b873593
       h ^= h >> 16
       h &*= 0x85ebca6b
       h ^= h >> 13
@@ -101,11 +101,11 @@ module Meth::PRNG
       h
     end
 
-    def bifloat32(a : UInt32, b : UInt32) : Float32
+    def bifloat32(a : Int32, b : Int32) : Float32
       to_bifloat32(int32(a, b))
     end
 
-    def unifloat32(a : UInt32, b : UInt32) : Float32
+    def unifloat32(a : Int32, b : Int32) : Float32
       to_unifloat32(int32(a, b))
     end
   end

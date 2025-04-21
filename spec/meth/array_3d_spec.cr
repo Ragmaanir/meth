@@ -23,4 +23,47 @@ describe Meth::Array3D do
       v += 1
     end
   end
+
+  test "indexing" do
+    a = SUT(Int32).new(Dim3i.new(3, 2, 2), 0)
+
+    a[{1, 0, 0}] = 1
+    a[{0, 1, 0}] = 2
+    a[{2, 1, 1}] = 3
+
+    assert a.array == [
+      # z=0
+      0, 1, 0,
+      2, 0, 0,
+      # z=1
+      0, 0, 0,
+      0, 0, 3,
+    ]
+  end
+
+  test "map" do
+    raw = [
+      # z=0
+      0, 1, 0,
+      2, 0, 3,
+      # z=1
+      0, 0, 0,
+      0, 1, 2,
+    ]
+
+    a = SUT(Int32).new(Dim3i.new(3, 2, 2), raw)
+
+    b = a.map { |coord, v|
+      2*v + coord.y
+    }
+
+    assert b.array == [
+      # z=0
+      0, 2, 0,
+      5, 1, 7,
+      # z=1
+      0, 0, 0,
+      1, 3, 5,
+    ]
+  end
 end

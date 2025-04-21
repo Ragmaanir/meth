@@ -1,11 +1,13 @@
 module Meth
-  struct Dimension2(T)
+  class Dimension2(T)
     def self.zero
       new(T.zero, T.zero)
     end
 
     getter width : T
     getter height : T
+
+    def_equals_and_hash width, height
 
     def initialize(@width, @height)
     end
@@ -50,8 +52,19 @@ module Meth
       self.class.new(height, width)
     end
 
+    def index_for_coord(coord : Tuple(Int32, Int32))
+      coord[0] + coord[1] * width
+    end
+
+    def coord_for_index(i : Int32) : Tuple(Int32, Int32)
+      x = i % width
+      y = i // width
+
+      {x, y}
+    end
+
     # FIXME: only for int dim
-    def each_horizontally
+    def each_horizontally(&)
       height.times { |y|
         width.times { |x|
           yield(x, y)

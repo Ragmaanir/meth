@@ -36,7 +36,7 @@ abstract class Meth::Noise
   end
 
   def [](x : Int32, y : Int32) : Float32
-    self[x.to_f, y.to_f]
+    self[x.to_f32, y.to_f32]
   end
 
   abstract def [](x : Float32, y : Float32) : Float32

@@ -2,7 +2,11 @@ require "./dim3"
 
 module Meth
   class Array3D(T)
-    record(Coord, x : Int32, y : Int32, z : Int32)
+    record(Coord, x : Int32, y : Int32, z : Int32) do
+      def to_tuple
+        {x, y, z}
+      end
+    end
 
     include Enumerable({Coord, T})
 
@@ -19,20 +23,26 @@ module Meth
       }
     end
 
+    def initialize(@dimension, a : Array(T))
+      if dimension.product != a.size
+        raise("Array size does not match: #{@dimension} <=> #{a.size}")
+      end
+
+      @array = a.dup
+    end
+
     def length
       dimension.product
     end
 
     private def index_for(coord : Coord)
-      coord.x * dimension.depth * dimension.height + coord.y * dimension.depth + coord.z
+      dimension.index_for_coord(coord.to_tuple)
     end
 
     private def coord_for(idx : Int32)
-      x = idx % dimension.x
-      y = (idx // dimension.x) % dimension.y
-      z = idx // (dimension.x * dimension.y)
+      t = dimension.coord_for_index(idx)
 
-      Coord.new(x, y)
+      Coord.new(t[0], t[1], t[2])
     end
 
     def []?(coord : {Int32, Int32, Int32}) : T?
@@ -66,14 +76,20 @@ module Meth
     end
 
     def each(&block : ({Coord, T}) -> _)
-      dimension.width.times do |x|
+      dimension.depth.times do |z|
         dimension.height.times do |y|
-          dimension.depth.times do |z|
+          dimension.width.times do |x|
             coord = Coord.new(x, y, z)
             block.call({coord, self[coord]})
           end
         end
       end
+    end
+
+    def map(&block : (Coord, T) -> _)
+      res = self.class.new(dimension) { |c|
+        block.call(c, self[c])
+      }
     end
   end # Array3D
 end

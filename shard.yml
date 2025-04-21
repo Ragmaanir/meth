@@ -9,7 +9,7 @@ authors:
 development_dependencies:
   ameba:
     github: veelenga/ameba
-    version: 0.14
+    version: "1.6.4"
   microtest:
     github: ragmaanir/microtest
     branch: master

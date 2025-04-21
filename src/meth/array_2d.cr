@@ -2,7 +2,11 @@ require "./dim2"
 
 module Meth
   class Array2D(T)
-    record(Coord, x : Int32, y : Int32)
+    record(Coord, x : Int32, y : Int32) do
+      def to_tuple
+        {x, y}
+      end
+    end
 
     # include Enumerable({Coord, T})
 
@@ -19,19 +23,34 @@ module Meth
       }
     end
 
+    def initialize(@dimension, a : Array(T))
+      if dimension.product != a.size
+        raise("Array size does not match: #{@dimension} <=> #{a.size}")
+      end
+
+      @array = a.dup
+    end
+
     def length
       dimension.product
     end
 
     private def index_for(coord : Coord)
-      coord.x * dimension.height + coord.y
+      dimension.index_for_coord(coord.to_tuple)
     end
 
     private def coord_for(idx : Int32)
-      x = idx % dimension.x
-      y = idx // dimension.x
+      t = dimension.coord_for_index(idx)
 
-      Coord.new(x, y)
+      Coord.new(t[0], t[1])
+    end
+
+    def [](idx : Int32) : T
+      array[idx]
+    end
+
+    def []=(idx : Int32, v : T) : T
+      array[idx] = v
     end
 
     def []?(coord : {Int32, Int32}) : T?
@@ -65,8 +84,8 @@ module Meth
     end
 
     def each(&block : ({Coord, T}) -> _)
-      dimension.width.times { |x|
-        dimension.height.times { |y|
+      dimension.height.times { |y|
+        dimension.width.times { |x|
           coord = Coord.new(x, y)
           block.call({coord, self[coord]})
         }
@@ -76,6 +95,13 @@ module Meth
     def map(&block : (Coord, T) -> _)
       res = self.class.new(dimension) { |c|
         block.call(c, self[c])
+      }
+    end
+
+    def inspect_square(io : IO)
+      each { |coord, v|
+        io.print("%3d" % v)
+        io.puts if coord.x == dimension.width - 1
       }
     end
   end # Array3D
