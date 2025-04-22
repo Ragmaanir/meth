@@ -64,7 +64,7 @@ module Meth
     end
 
     # FIXME: only for int dim
-    def each_horizontally(&)
+    def each_point(&)
       height.times { |y|
         width.times { |x|
           yield(x, y)

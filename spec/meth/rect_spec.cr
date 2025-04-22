@@ -71,4 +71,33 @@ describe Meth::Rect do
 
     assert r == Rect2i.new(p2i(6, 7), d2i(0, 0))
   end
+
+  test "points" do
+    a = Rect2i.new(Point2i.new(2, 1), Point2i.new(4, 2))
+
+    assert a.points == [
+      {2, 1}, {3, 1}, {4, 1},
+      {2, 2}, {3, 2}, {4, 2},
+    ].map { |t| Point2i.new(t[0], t[1]) }
+
+    b = Rect2i.new(Point2i.new(-1, -1), Point2i.new(1, 0))
+
+    assert b.points == [
+      {-1, -1}, {0, -1}, {1, -1},
+      {-1, 0}, {0, 0}, {1, 0},
+    ].map { |t| Point2i.new(t[0], t[1]) }
+  end
+
+  test "each_point" do
+    points = [] of Tuple(Int32, Int32)
+
+    Rect2i.new(Point2i.new(2, 1), Point2i.new(4, 2)).each_point { |x, y|
+      points << {x, y}
+    }
+
+    assert points == [
+      {2, 1}, {3, 1}, {4, 1},
+      {2, 2}, {3, 2}, {4, 2},
+    ]
+  end
 end

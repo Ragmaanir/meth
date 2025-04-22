@@ -151,8 +151,14 @@ module Meth
         point.y >= min.y && point.y < max.y
     end
 
+    def points : Array(Point2i)
+      res = [] of Point2i
+      each_point { |x, y| res << Point2i.new(x, y) }
+      res
+    end
+
     # FIXME: only for int rect
-    def each_horizontally(&)
+    def each_point(&)
       (top..bottom).each { |y|
         (left..right).each { |x|
           yield(x, y)

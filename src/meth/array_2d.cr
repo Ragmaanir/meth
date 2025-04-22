@@ -92,8 +92,8 @@ module Meth
       }
     end
 
-    def map(&block : (Coord, T) -> _)
-      res = self.class.new(dimension) { |c|
+    def map(&block : (Coord, T) -> U) forall U
+      res = Array2D(U).new(dimension) { |c|
         block.call(c, self[c])
       }
     end

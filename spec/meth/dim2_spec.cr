@@ -23,4 +23,18 @@ describe Meth::Dim2i do
 
     assert d.index_for_coord({1, 2}) == d.product - 1
   end
+
+  test "each_point" do
+    points = [] of Tuple(Int32, Int32)
+
+    Dim2i.new(2, 3).each_point { |x, y|
+      points << {x, y}
+    }
+
+    assert points == [
+      {0, 0}, {1, 0},
+      {0, 1}, {1, 1},
+      {0, 2}, {1, 2},
+    ]
+  end
 end
