@@ -10,6 +10,9 @@ development_dependencies:
   ameba:
     github: veelenga/ameba
     version: "1.6.4"
+  stumpy_png:
+    github: stumpycr/stumpy_png
+    version: "~> 5.0"
   microtest:
     github: ragmaanir/microtest
     branch: master

@@ -1,5 +1,5 @@
-require "../spec_helper"
-require "../../src/meth/array_3d"
+require "./spec_helper"
+require "../src/meth/array_3d"
 
 describe Meth::Array3D do
   alias SUT = Meth::Array3D

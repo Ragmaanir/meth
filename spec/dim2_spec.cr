@@ -1,4 +1,4 @@
-require "./../spec_helper"
+require "./spec_helper"
 
 describe Meth::Dim2i do
   include Meth

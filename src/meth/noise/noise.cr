@@ -39,6 +39,10 @@ abstract class Meth::Noise
     self[x.to_f32, y.to_f32]
   end
 
+  def unifloat32(x : Float32, y : Float32)
+    (1 + self[x, y]) / 2
+  end
+
   abstract def [](x : Float32, y : Float32) : Float32
 
   def matrix(origin : Point2i, size : Dim2i) : Array2D(Float32)

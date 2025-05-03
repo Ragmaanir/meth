@@ -157,11 +157,21 @@ module Meth
       res
     end
 
-    # FIXME: only for int rect
-    def each_point(&)
-      (top..bottom).each { |y|
-        (left..right).each { |x|
-          yield(x, y)
+    def each_point(dx : Scalar = 1, dy : Scalar = 1, &)
+      y = top
+      x = left
+      ix = 0
+      iy = 0
+
+      # +1 to include the right-most and bottom-most points
+      xn = 1 + (width / dx).to_i
+      yn = 1 + (height / dy).to_i
+
+      yn.times { |yi|
+        xn.times { |xi|
+          x = left + xi*dx
+          y = top + yi*dy
+          yield(x, y, {ix, iy})
         }
       }
     end

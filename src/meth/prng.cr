@@ -41,58 +41,44 @@ module Meth::PRNG
   end
 
   module Noise2D
-    abstract def int32(a : Int32, b : Int32) : UInt32
+    abstract def uint32(x : Int32, y : Int32) : UInt32
   end
 
-  # uint32_t wyhash_mix(uint32_t a, uint32_t b) {
-  #     uint64_t seed = ((uint64_t)a << 32) | b;
-  #     seed ^= seed >> 32;
-  #     seed *= 0xa0761d6478bd642f;
-  #     seed ^= seed >> 32;
-  #     seed *= 0xa0761d6478bd642f;
-  #     seed ^= seed >> 32;
-  #     return (uint32_t)seed;
-  # }
   class Wyhash
     include Noise2D
     include MathHelpers
 
-    MAGIC = 0xa0761d6478bd642f_u64
+    MAGIC0 = 0xa0761d6478bd642f_u64
+    MAGIC1 = 0xe7037ed1a0b428db_u64
 
-    def int32(a : Int32, b : Int32) : UInt32
-      seed = (a.to_u64! << 32) | b.to_u64!
+    def uint32(x : Int32, y : Int32) : UInt32
+      ux = x.to_u32!.to_u64
+      uy = y.to_u32!.to_u64
+
+      seed = ux << 32
+      seed |= uy ^ ux
+      seed &*= MAGIC0
       seed ^= seed >> 32
-      seed &*= MAGIC
-      seed ^= seed >> 32
-      seed &*= MAGIC
+      seed &*= MAGIC0
       seed ^= seed >> 32
       seed.to_u32!
     end
 
-    def bifloat32(a : Int32, b : Int32) : Float32
-      to_bifloat32(int32(a, b))
+    def bifloat32(x : Int32, y : Int32) : Float32
+      to_bifloat32(uint32(x, y))
     end
 
-    def unifloat32(a : Int32, b : Int32) : Float32
-      to_unifloat32(int32(a, b))
+    def unifloat32(x : Int32, y : Int32) : Float32
+      to_unifloat32(uint32(x, y))
     end
   end
 
-  # uint32_t murmur_mix(uint32_t a, uint32_t b) {
-  #     uint32_t h = a * 0xcc9e2d51 + b * 0x1b873593;
-  #     h ^= h >> 16;
-  #     h *= 0x85ebca6b;
-  #     h ^= h >> 13;
-  #     h *= 0xc2b2ae35;
-  #     h ^= h >> 16;
-  #     return h;
-  # }
   class Murmur
     include Noise2D
     include MathHelpers
 
-    def int32(a : Int32, b : Int32) : UInt32
-      h = a.to_u32! &* 0xcc9e2d51 &+ b.to_u32! &* 0x1b873593
+    def uint32(x : Int32, y : Int32) : UInt32
+      h = x.to_u32! &* 0xcc9e2d51 &+ y.to_u32! &* 0x1b873593
       h ^= h >> 16
       h &*= 0x85ebca6b
       h ^= h >> 13
@@ -101,12 +87,12 @@ module Meth::PRNG
       h
     end
 
-    def bifloat32(a : Int32, b : Int32) : Float32
-      to_bifloat32(int32(a, b))
+    def bifloat32(x : Int32, y : Int32) : Float32
+      to_bifloat32(uint32(x, y))
     end
 
-    def unifloat32(a : Int32, b : Int32) : Float32
-      to_unifloat32(int32(a, b))
+    def unifloat32(x : Int32, y : Int32) : Float32
+      to_unifloat32(uint32(x, y))
     end
   end
 end

@@ -20,8 +20,8 @@ class Meth::ValueNoise < Meth::Noise
     x = x / scale
     y = y / scale
 
-    xu = x.to_u!
-    yu = y.to_u!
+    xu = x.floor.to_i!
+    yu = y.floor.to_i!
 
     if interpolation == Interpolation::None
       v = noise.bifloat32(xu, yu)
@@ -34,8 +34,8 @@ class Meth::ValueNoise < Meth::Noise
       v11 = noise.bifloat32(xu + 1, yu + 1)
       v01 = noise.bifloat32(xu, yu + 1)
 
-      dx = x - xu
-      dy = y - yu
+      dx = (x - xu)
+      dy = (y - yu)
 
       case interpolation
       when Interpolation::Bilinear
