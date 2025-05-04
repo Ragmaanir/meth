@@ -16,7 +16,7 @@ class Meth::ValueNoise < Meth::Noise
     super(**options)
   end
 
-  def [](x : Float32, y : Float32) : Float32
+  def [](x : Float32, y : Float32, polarize_to : Polarity = :bi) : Float32
     x = x / scale
     y = y / scale
 
@@ -39,7 +39,7 @@ class Meth::ValueNoise < Meth::Noise
 
       case interpolation
       when Interpolation::Bilinear
-        v = bilinear_interp(dx, dy, v00, v10, v01, v11)
+        v = bilerp(dx, dy, v00, v10, v01, v11)
       when Interpolation::WeightedBilinear
         d00 = (dx*dx + dy*dy) / 2.0_f32
         d10 = ((1 - dx)*(1 - dx) + dy*dy) / 2.0_f32
@@ -60,6 +60,6 @@ class Meth::ValueNoise < Meth::Noise
       end
     end
 
-    v
+    polarize(v, polarize_to)
   end
 end

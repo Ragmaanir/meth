@@ -60,7 +60,7 @@ describe Meth::ValueNoise do
     n = ValueNoise.new
 
     snapshot("value_noise_spec", Rect2f.new(0, 0, 256, 256)) { |x, y|
-      v = n.unifloat32(x.to_f32, y.to_f32) * 255
+      v = n[x.to_f32, y.to_f32, :uni] * 255
 
       RGBA.from_rgb_n(v, v, v, 8)
     }
@@ -70,7 +70,7 @@ describe Meth::ValueNoise do
     n = ValueNoise.new
 
     snapshot("value_noise_spec_negative", Rect2f.new(-100, -100, 156, 156)) { |x, y|
-      v = n.unifloat32(x.to_f32, y.to_f32) * 255
+      v = n[x.to_f32, y.to_f32, :uni] * 255
 
       RGBA.from_rgb_n(v, v, v, 8)
     }
@@ -80,7 +80,7 @@ describe Meth::ValueNoise do
     n = ValueNoise.new
 
     snapshot("image_two", Rect2f.new(-101, -13, -47, 7), 3) { |x, y|
-      v = n.unifloat32(x.to_f32, y.to_f32) * 255
+      v = n[x.to_f32, y.to_f32, :uni] * 255
 
       RGBA.from_rgb_n(v, v, v, 8)
     }

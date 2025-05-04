@@ -1,25 +1,13 @@
 require "../array_2d"
+require "../interpolation"
 
-module Meth::NoiseMath
-  def lerp(a : Float32, b : Float32, t : Float32) : Float32
-    a + (b - a) * t
-  end
-
-  def bilinear_interp(
-    x : Float32, y : Float32,
-    v00 : Float32, v10 : Float32,
-    v01 : Float32, v11 : Float32,
-  ) : Float32
-    lerp(
-      lerp(v00, v10, x), # Interpolate along x at y=0
-      lerp(v01, v11, x), # Interpolate along x at y=1
-      y                  # Interpolate between the results along y
-    )
-  end
+enum Meth::Polarity
+  Uni
+  Bi
 end
 
 abstract class Meth::Noise
-  include NoiseMath
+  include Interpolation
 
   getter scale : Float32
 
@@ -27,27 +15,38 @@ abstract class Meth::Noise
     @scale = scale.to_f32
   end
 
-  def [](p : Point2i) : Float32
-    self[p.x, p.y]
+  def bi_to_uni(v : Float32) : Float32
+    (1 + v) / 2
   end
 
-  def [](p : Point2f) : Float32
-    self[p.x.to_f32, p.y.to_f32]
+  def bi_to_uni(v : Float64) : Float64
+    (1 + v) / 2
   end
 
-  def [](x : Int32, y : Int32) : Float32
-    self[x.to_f32, y.to_f32]
+  def polarize(v : Float, polarize_to : Polarity)
+    case polarize_to
+    in Polarity::Bi  then v
+    in Polarity::Uni then bi_to_uni(v)
+    end
   end
 
-  def unifloat32(x : Float32, y : Float32)
-    (1 + self[x, y]) / 2
+  def [](p : Point2i, polarize_to : Polarity = :bi) : Float32
+    self[p.x, p.y, polarize_to]
   end
 
-  abstract def [](x : Float32, y : Float32) : Float32
+  def [](p : Point2f, polarize_to : Polarity = :bi) : Float32
+    self[p.x.to_f32, p.y.to_f32, polarize_to]
+  end
 
-  def matrix(origin : Point2i, size : Dim2i) : Array2D(Float32)
-    res = Array2D(Float32).new(size) { |at|
-      self[origin.to_point2f + Vector2f.new(at.x, at.y)]
+  def [](x : Int32, y : Int32, polarize_to : Polarity = :bi) : Float32
+    self[x.to_f32, y.to_f32, polarize_to]
+  end
+
+  abstract def [](x : Float32, y : Float32, polarize_to : Polarity = :bi) : Float32
+
+  def matrix(origin : Point2i, size : Dim2i, polarize_to : Polarity = :bi) : Array2D(Float32)
+    Array2D(Float32).new(size) { |at|
+      self[origin.to_point2f + Vector2f.new(at.x, at.y), polarize_to]
     }
   end
 end

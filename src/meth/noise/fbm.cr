@@ -10,7 +10,7 @@ class Meth::FBM < Meth::Noise
     super(**options)
   end
 
-  def [](x : Float32, y : Float32) : Float32
+  def [](x : Float32, y : Float32, polarize_to : Polarity = :bi) : Float32
     x = x / scale
     y = y / scale
 
@@ -26,6 +26,6 @@ class Meth::FBM < Meth::Noise
       amp *= persistence
     }
 
-    total / max_value
+    polarize(total / max_value, polarize_to)
   end
 end
